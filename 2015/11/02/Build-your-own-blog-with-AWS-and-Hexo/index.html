@@ -68,7 +68,7 @@ Pre">
 <meta property="og:image" content="http://zeyangwang.com/2015/11/02/Build-your-own-blog-with-AWS-and-Hexo/create_security_group.png">
 <meta property="og:image" content="http://zeyangwang.com/2015/11/02/Build-your-own-blog-with-AWS-and-Hexo/create_key_pair.png">
 <meta property="og:image" content="http://zeyangwang.com/2015/11/02/Build-your-own-blog-with-AWS-and-Hexo/running_instances.png">
-<meta property="og:updated_time" content="2015-11-05T03:42:00.000Z">
+<meta property="og:updated_time" content="2015-11-07T05:26:55.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Build your own blog with AWS and Hexo">
 <meta name="twitter:description" content="Before start, I should really say this is not the best way to create a blog. There are other easy ways, or more powerful ways. This is just me trying something new, and most importantly, have fun.
@@ -168,7 +168,7 @@ Pre">
       
         
         <li class="menu-item menu-item-tags">
-          <a href="/tag" rel="section">
+          <a href="/tags" rel="section">
             
               <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
             
@@ -252,7 +252,8 @@ Pre">
 <h1 id="Get_Your_Domain">Get Your Domain</h1><p>First you need a personal domain. There are bunch of places, I got mine from <a href="https://www.godaddy.com" target="_blank" rel="external">GoDaddy</a>.</p>
 <p>If you find your preferable doamin with <code>.com</code> suffix is not available, try <code>.net</code>, <code>.io</code>, <code>.me</code>, but <strong>NOT</strong> <code>.gov</code>, <code>.biz</code>, <code>.info</code> which are pretty inappropriate.</p>
 <p>After you got it, you can go to the manage page, and set “Forwarding” to your facebook page or twitter page, just for fun.</p>
-<h1 id="Setup_Your_AWS_EC2">Setup Your AWS EC2</h1><h2 id="Create_An_EC2_Instance">Create An EC2 Instance</h2><p>If you know how to launch a EC2 instance, feel free to skip this section. Continue if you don’t.</p>
+<h1 id="Setup_Your_AWS_EC2">Setup Your AWS EC2</h1><a id="more"></a>
+<h2 id="Create_An_EC2_Instance">Create An EC2 Instance</h2><p>If you know how to launch a EC2 instance, feel free to skip this section. Continue if you don’t.</p>
 <p>Login to <a href="https://aws.amazon.com" target="_blank" rel="external">Amazon AWS</a>, click <strong>My Account</strong> -&gt; <strong>AWS Management Console</strong>, and select EC2.</p>
 <p>Click <strong>Launch Instance</strong> (Choose your fav image, I use Amazon Linux).<br><img src="/2015/11/02/Build-your-own-blog-with-AWS-and-Hexo/launch_instance.png" alt="launch_instance.png" title=""><br><img src="/2015/11/02/Build-your-own-blog-with-AWS-and-Hexo/select_instance.png" alt="select_instance.png" title=""></p>
 <p>Then you’ll see the instance type page, remember to select the <strong>t2.micro</strong> type, it is a tiny machine but good enough for your blog.<br><img src="/2015/11/02/Build-your-own-blog-with-AWS-and-Hexo/review_and_launch.png" alt="review_and_launch.png" title=""></p>
