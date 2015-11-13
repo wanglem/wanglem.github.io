@@ -1,0 +1,596 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+    <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="api,database,mysql,pagination,sql," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="Pagination is one of the key concepts of Restful API. I don’t want to repeat its advantage and necessity, because everybody already has the sense to do it. In this article I’m just going to talk about">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Paginating Your Database - The Hard Way">
+<meta property="og:url" content="http://zeyangwang.com/2015/11/13/Paginating-Your-Database/index.html">
+<meta property="og:site_name" content="Zeyang's Blog">
+<meta property="og:description" content="Pagination is one of the key concepts of Restful API. I don’t want to repeat its advantage and necessity, because everybody already has the sense to do it. In this article I’m just going to talk about">
+<meta property="og:image" content="http://zeyangwang.com/2015/11/13/Paginating-Your-Database/data_loss_offset.png">
+<meta property="og:image" content="http://zeyangwang.com/2015/11/13/Paginating-Your-Database/data_loss_nonunique_ts.png">
+<meta property="og:updated_time" content="2015-11-13T06:11:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Paginating Your Database - The Hard Way">
+<meta name="twitter:description" content="Pagination is one of the key concepts of Restful API. I don’t want to repeat its advantage and necessity, because everybody already has the sense to do it. In this article I’m just going to talk about">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'remove',
+    motion: true
+  };
+</script>
+
+  <title> Paginating Your Database - The Hard Way | Zeyang's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Zeyang's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Technical and Stuff</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Paginating Your Database - The Hard Way
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            Posted on
+            <time itemprop="dateCreated" datetime="2015-11-13T01:08:10-05:00" content="2015-11-13">
+              2015-11-13
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>Pagination is one of the key concepts of Restful API. I don’t want to repeat its advantage and necessity, because everybody already has the sense to do it. In this article I’m just going to talk about different ways to do it, on MySQL database.</p>
+<p><strong>Enviroment:</strong></p>
+<blockquote>
+<p>Macbook Pro OS X El Capitan, i7 with 16G RAM<br>MySQL Ver 15.1 Distrib 10.1.8-MariaDB</p>
+</blockquote>
+<a id="more"></a>
+<p><strong>Disclaimer:</strong> This is not meant to be a design draft for pagination, and I want to be use case specific and sql focused. Practically speaking pagination would also involve a lot application level considerations including data modeling, caching etc.</p>
+<h1 id="A_Simple_Use_Case">A Simple Use Case</h1><p>Let’s say we have a table that stores users’ followed topic, the requirement is</p>
+<blockquote>
+<p>list all “uid”, 100 per page</p>
+</blockquote>
+<p>Consider the following schema:<br><figure class="highlight sql"><figcaption><span>Testing Schema</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`followed_topics`</span> (</span><br><span class="line">	<span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">UNSIGNED</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">	<span class="string">`uid`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">UNSIGNED</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	<span class="string">`topic_id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">UNSIGNED</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	<span class="keyword">UNIQUE</span> <span class="keyword">KEY</span> <span class="string">`uq_user_topic`</span> (<span class="string">`uid`</span>,<span class="string">`topic_id`</span>),</span><br><span class="line">	PRIMARY <span class="keyword">KEY</span>(<span class="string">`id`</span>)</span><br><span class="line">);</span></span><br></pre></td></tr></table></figure></p>
+<p>I pre-loaded 20M incrementally generated dummy records, 2000 users, each user with 10000 topics.</p>
+<h2 id="First_Approach">First Approach</h2><p>My instinct tells me the easiest way is something like:<br><figure class="highlight sql"><figcaption><span>First Approach</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">SELECT</span> <span class="keyword">distinct</span> uid </span><br><span class="line"><span class="keyword">FROM</span> followed_topics </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> uid <span class="keyword">asc</span> </span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">0</span>, <span class="number">100</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="operator"><span class="keyword">SELECT</span> <span class="keyword">distinct</span> uid </span><br><span class="line"><span class="keyword">FROM</span> followed_topics </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> uid <span class="keyword">asc</span> </span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">100</span>, <span class="number">100</span>;</span></span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>Interestingly, the query time starts staying consistent when pacing towards the later stage. </p>
+<table>
+<thead>
+<tr>
+<th>Limit Clause</th>
+<th>Query Time(s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>limit 0, 100;</td>
+<td>0.17</td>
+</tr>
+<tr>
+<td>limit 400, 100;</td>
+<td>1.1</td>
+</tr>
+<tr>
+<td>limit 800, 100;</td>
+<td>1.94</td>
+</tr>
+<tr>
+<td>limit 1200, 100;</td>
+<td>3.48</td>
+</tr>
+<tr>
+<td>limit 1600, 100;</td>
+<td>4.51</td>
+</tr>
+</tbody>
+</table>
+<p>Besides the obvious slowness issue, another major one is we might encounter data loss. For example, just before we load page 2 by running <code>limit 100, 100</code>, user “5” suddenly deleted, user “100” would be shifted to page 1, bad bad:<br><img src="/2015/11/13/Paginating-Your-Database/data_loss_offset.png" alt="Data Loss from Hard Offsets" title="Data Loss from Hard Offsets"></p>
+<h2 id="Improved_Approach:">Improved Approach:</h2><figure class="highlight sql"><figcaption><span>Improved</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">SELECT</span> <span class="keyword">distinct</span> uid </span><br><span class="line"><span class="keyword">FROM</span> followed_topics </span><br><span class="line"><span class="keyword">WHERE</span> uid &gt; %%last_seen_uid%% </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> uid <span class="keyword">asc</span> </span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">100</span>;</span></span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p><code>%%last_seen_uid%%</code> is the max uid selected on previous page. In this case we don’t implicitly rely on other referenced object state: user, topic. Futuremore, the query use table index much better as well, it runs on an average of 200 microseconds, not bad. </p>
+<figure class="highlight"><figcaption><span>Explain Result 1</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">admin [tmp]&gt;explain select distinct uid from followed_topics order by uid asc  limit 800, 100;</span><br><span class="line">+------+-------------+-----------------+-------+---------------+----------------+---------+------+----------+-------------+</span><br><span class="line">| id   | select_type | table           | type  | possible_keys | key            | key_len | ref  | rows     | Extra       |</span><br><span class="line">+------+-------------+-----------------+-------+---------------+----------------+---------+------+----------+-------------+</span><br><span class="line">|    1 | SIMPLE      | followed_topics | index | NULL          | uq_user_topic  | 8       | NULL | 19381707 | Using index |</span><br><span class="line">+------+-------------+-----------------+-------+---------------+----------------+---------+------+----------+-------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<figure class="highlight"><figcaption><span>Explain Result 2</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">admin [tmp]&gt;explain select distinct uid from followed_topics where uid &gt; 800 order by uid asc limit 100;</span><br><span class="line">+------+-------------+-----------------+-------+----------------+----------------+---------+------+-------+---------------------------------------+</span><br><span class="line">| id   | select_type | table           | type  | possible_keys  | key            | key_len | ref  | rows  | Extra                                 |</span><br><span class="line">+------+-------------+-----------------+-------+----------------+----------------+---------+------+-------+---------------------------------------+</span><br><span class="line">|    1 | SIMPLE      | followed_topics | range | uq_user_topic  | uq_user_topic  | 4       | NULL | 31261 | Using where; Using index for group-by |</span><br><span class="line">+------+-------------+-----------------+-------+----------------+----------------+---------+------+-------+---------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>Above explain shows that the second query using range instead of full table scan (even though on index), and using a lower key_len usage, as a result it scans only on a 30K magnitude compares to 20M from the first one.<br>Note there is a <code>Using index for group-by</code> in Extra column, that is because the query met the <strong>loose index scan</strong> – uid is on the leftmost of the index (uid, topic_id) we have, plus it’s a BTREE istead of HASH, and it enables lookup groups in an index without worrying about all the keys in that index that match the filter condition. Click to see more <a href="https://dev.mysql.com/doc/refman/5.7/en/explain-output.html" target="_blank" rel="external">MySQL explain</a> and <a href="https://dev.mysql.com/doc/refman/5.7/en/group-by-optimization.html" target="_blank" rel="external">Group Optimization</a>.</p>
+<h1 id="A_More_Modern_Use_Case">A More Modern Use Case</h1><p><br \=""></p>
+<blockquote>
+<p>List all topics that followed by a user, newest comes to first, 10 per page.</p>
+</blockquote>
+<p>Looks familiar? Yup, this is likely to be a feed or timeline service use case. Welcome to the modern world. With previous example, we need add a new field –  <strong>created_on</strong>, which is a timestamp field, to the table to do sorting. Consider the following schema:<br><figure class="highlight sql"><figcaption><span>Updated Testing Schema </span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`followed_topics`</span> (</span><br><span class="line">	<span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">UNSIGNED</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">	<span class="string">`uid`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">UNSIGNED</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	<span class="string">`topic_id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">UNSIGNED</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	<span class="string">`created_on`</span> <span class="keyword">TIMESTAMP</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="keyword">CURRENT_TIMESTAMP</span>,</span><br><span class="line">	<span class="keyword">UNIQUE</span> <span class="keyword">KEY</span> <span class="string">`uq_user_topic`</span> (<span class="string">`uid`</span>,<span class="string">`topic_id`</span>),</span><br><span class="line">	<span class="keyword">KEY</span> <span class="string">`idx_created_on`</span> (<span class="string">`created_on`</span>),</span><br><span class="line">	PRIMARY <span class="keyword">KEY</span>(<span class="string">`id`</span>)</span><br><span class="line">);</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="Filter_by_TIMESTAMP">Filter by TIMESTAMP</h2><p>From our previously improved paging sql, the answer quckly arise:<br><figure class="highlight sql"><figcaption><span>First Approach</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">SELECT</span> topic_id </span><br><span class="line"><span class="keyword">FROM</span> followed_topics </span><br><span class="line"><span class="keyword">WHERE</span> uid = %%<span class="keyword">current_user</span>%% <span class="keyword">and</span> created_on &gt; %%last_seen_time%% </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> created_on <span class="keyword">desc</span> </span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">10</span>;</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>Hmm, looks legit.<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">admin [tmp]&gt;explain select topic_id from followed_topics where uid = 100 and created_on &lt; "2015-12-20 00:00:00" order by created_on desc limit 10;</span><br><span class="line">+------+-------------+-----------------+------+--------------------------------+----------------+---------+-------+------+-----------------------------+</span><br><span class="line">| id   | select_type | table           | type | possible_keys                  | key            | key_len | ref   | rows | Extra                       |</span><br><span class="line">+------+-------------+-----------------+------+--------------------------------+----------------+---------+-------+------+-----------------------------+</span><br><span class="line">|    1 | SIMPLE      | followed_topics | ref  | uq_author_book,idx_created_on  | uq_author_book | 4       | const | 1999 | Using where; Using filesort |</span><br><span class="line">+------+-------------+-----------------+------+--------------------------------+----------------+---------+-------+------+-----------------------------+</span><br><span class="line">1 row in set (0.01 sec)</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure></p>
+<p>From SQL explain result above, it’s not a bad query at all. I’m a little suprised this query is using firesort, because it should sort by created_on which is an indexed column. I guess the reason is the query optimizer would totally ignore the unsed key, even though sort and filter might be two operations.</p>
+<p>Note: Interestingly, filesort does not necessarily mean sort on disk, it more of any sort that is not using an index, and essentially by quicksort and mergesort. I guess it’s just poorly named. See more in this <a href="http://s.petrunia.net/blog/?p=24" target="_blank" rel="external"><strong>article</strong></a>.</p>
+<p>Okay, so far so good. If we are working with a high volume of events, however, we could still encounter data loss. The reason is <code>created_on</code>, which is the timestamp field, is not unique. Therefore multiple followed topics with same created_on might be trunated from limit clause:<br><img src="/2015/11/13/Paginating-Your-Database/data_loss_nonunique_ts.png" alt="Data Loss from Non-unique Timestamp" title="Data Loss from Non-unique Timestamp"></p>
+<h2 id="Filter_by_ID_for_more_Uniqueness">Filter by ID for more Uniqueness</h2><p>How about using PK(id) field? If we rely on the implication that the higher ID the closer created_on, we will have:</p>
+<figure class="highlight sql"><figcaption><span>Using id Instead of created_on</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">SELECT</span> topic_id </span><br><span class="line"><span class="keyword">FROM</span> followed_topics </span><br><span class="line"><span class="keyword">WHERE</span> uid = %%<span class="keyword">current_user</span>%% <span class="keyword">and</span> <span class="keyword">id</span> &lt; %%last_seen_id%% </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">id</span> <span class="keyword">desc</span> </span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">10</span>;</span></span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>In this case we want to use id to filter as well as sorting, as it can using same key on all filters:<br><figure class="highlight"><figcaption><span>Using index V.S. Using index condition</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">admin [tmp]&gt;explain SELECT topic_id FROM followed_topics WHERE uid = 100 and id &lt; 1000000 ORDER BY id desc LIMIT 10;</span><br><span class="line">+------+-------------+-----------------+------+------------------------+----------------+---------+-------+------+------------------------------------------+</span><br><span class="line">| id   | select_type | table           | type | possible_keys          | key            | key_len | ref   | rows | Extra                                    |</span><br><span class="line">+------+-------------+-----------------+------+------------------------+----------------+---------+-------+------+------------------------------------------+</span><br><span class="line">|    1 | SIMPLE      | followed_topics | ref  | PRIMARY,uq_author_book | uq_author_book | 4       | const | 1999 | Using where; Using index; Using filesort |</span><br><span class="line">+------+-------------+-----------------+------+------------------------+----------------+---------+-------+------+------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">admin [tmp]&gt;explain SELECT topic_id FROM followed_topics WHERE uid = 100 and id &lt; 1000000 ORDER BY created_on desc LIMIT 10;</span><br><span class="line">+------+-------------+-----------------+------+------------------------+----------------+---------+-------+------+----------------------------------------------------+</span><br><span class="line">| id   | select_type | table           | type | possible_keys          | key            | key_len | ref   | rows | Extra                                              |</span><br><span class="line">+------+-------------+-----------------+------+------------------------+----------------+---------+-------+------+----------------------------------------------------+</span><br><span class="line">|    1 | SIMPLE      | followed_topics | ref  | PRIMARY,uq_author_book | uq_author_book | 4       | const | 1999 | Using index condition; Using where; Using filesort |</span><br><span class="line">+------+-------------+-----------------+------+------------------------+----------------+---------+-------+------+----------------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure></p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/api/" rel="tag">#api</a>
+          
+            <a href="/tags/database/" rel="tag">#database</a>
+          
+            <a href="/tags/mysql/" rel="tag">#mysql</a>
+          
+            <a href="/tags/pagination/" rel="tag">#pagination</a>
+          
+            <a href="/tags/sql/" rel="tag">#sql</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/11/02/Build-your-own-blog-with-AWS-and-Hexo/" rel="next" title="Build your own blog with AWS and Hexo">
+                <i class="fa fa-chevron-left"></i> Build your own blog with AWS and Hexo
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+      </div>
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zeyang Wang</span>
+</div>
+<div class="disclaimer">
+  All Rights Reserved.
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

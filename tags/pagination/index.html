@@ -56,7 +56,7 @@
 <meta name="description">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Zeyang's Blog">
-<meta property="og:url" content="http://zeyangwang.com/index.html">
+<meta property="og:url" content="http://zeyangwang.com/tags/pagination/index.html">
 <meta property="og:site_name" content="Zeyang's Blog">
 <meta property="og:description">
 <meta name="twitter:card" content="summary">
@@ -73,7 +73,7 @@
   };
 </script>
 
-  <title> Zeyang's Blog </title>
+  <title> Tag: pagination | Zeyang's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -94,9 +94,7 @@
 
 
 
-  <div class="container one-column 
-   page-home 
-">
+  <div class="container one-column ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -183,269 +181,45 @@
       <div class="main-inner">
         <div id="content" class="content">
           
-  <section id="posts" class="posts-expand">
 
-    
-
-    
-    
+  <div id="posts" class="posts-collapse">
+    <div class="collection-title">
+      <h2 >
+        pagination
+        <small>Tag</small>
+      </h2>
+    </div>
 
     
       
 
-  
-  
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
 
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
+      <h1 class="post-title">
         
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
+            <a class="post-title-link" href="/2015/11/13/Paginating-Your-Database/" itemprop="url">
               
-                
-                <a class="post-title-link" href="/2015/11/13/Paginating-Your-Database/" itemprop="url">
-                  Paginating Your Database - The Hard Way
-                </a>
+                <span itemprop="name">Paginating Your Database - The Hard Way</span>
               
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            Posted on
-            <time itemprop="dateCreated" datetime="2015-11-13T01:08:10-05:00" content="2015-11-13">
-              2015-11-13
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p>Pagination is one of the key concepts of Restful API. I don’t want to repeat its advantage and necessity, because everybody already has the sense to do it. In this article I’m just going to talk about different ways to do it, on MySQL database.</p>
-<p><strong>Enviroment:</strong></p>
-<blockquote>
-<p>Macbook Pro OS X El Capitan, i7 with 16G RAM<br>MySQL Ver 15.1 Distrib 10.1.8-MariaDB</p>
-</blockquote>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/11/13/Paginating-Your-Database/#more" rel="contents">
-              Read more &raquo;
             </a>
-          </div>
         
-      
-    </div>
+      </h1>
 
-    <footer class="post-footer">
-      
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2015-11-13T01:08:10-05:00"
+              content="2015-11-13" >
+          11-13
+        </time>
+      </div>
 
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
+    </header>
   </article>
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/11/02/Build-your-own-blog-with-AWS-and-Hexo/" itemprop="url">
-                  Build your own blog with AWS and Hexo
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            Posted on
-            <time itemprop="dateCreated" datetime="2015-11-02T15:25:15-05:00" content="2015-11-02">
-              2015-11-02
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p>Before start, I should really say this is not the best way to create a blog. There are other easy ways, or more powerful ways. This is just me trying something new, and most importantly, have fun.</p>
-<h1 id="Prerequisite">Prerequisite</h1><p>Linux, Git, Node.js, CSS</p>
-<h1 id="Get_Your_Domain">Get Your Domain</h1><p>First you need a personal domain. There are bunch of places, I got mine from <a href="https://www.godaddy.com">GoDaddy</a>.</p>
-<p>If you find your preferable doamin with <code>.com</code> suffix is not available, try <code>.net</code>, <code>.io</code>, <code>.me</code>, but <strong>NOT</strong> <code>.gov</code>, <code>.biz</code>, <code>.info</code> which are pretty inappropriate.</p>
-<p>After you got it, you can go to the manage page, and set “Forwarding” to your facebook page or twitter page, just for fun.</p>
-<h1 id="Setup_Your_AWS_EC2">Setup Your AWS EC2</h1>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/11/02/Build-your-own-blog-with-AWS-and-Hexo/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/10/31/init/" itemprop="url">
-                  Initial Post
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            Posted on
-            <time itemprop="dateCreated" datetime="2015-10-31T17:25:38-05:00" content="2015-10-31">
-              2015-10-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody">
-            
-              <p>Welcome to my space, this is my first attempt on post something with Hexo.</p>
-<p>Love the NexT theme!</p>
-
-            
-          </span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-
-  </section>
+  </div>
 
   
 
@@ -489,6 +263,12 @@
 
   
   
+  
+    <script type="text/javascript">
+      postMotionOptions = {stagger: 100, drag: true};
+    </script>
+  
+
 
   
     
