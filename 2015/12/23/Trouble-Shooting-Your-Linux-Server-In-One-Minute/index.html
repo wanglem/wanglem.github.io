@@ -1,0 +1,650 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+    <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="bash,linux,performance,server,shell,trouble shooting," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="If you noticed a weirly performing Linux server, what things are you going to check in the first minute after jumping on the server? Assuming it’s not soooo bad which is denying all incoming requests.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Trouble Shooting Your Linux Server In One Minute">
+<meta property="og:url" content="http://zeyangwang.com/2015/12/23/Trouble-Shooting-Your-Linux-Server-In-One-Minute/index.html">
+<meta property="og:site_name" content="Zeyang's Blog">
+<meta property="og:description" content="If you noticed a weirly performing Linux server, what things are you going to check in the first minute after jumping on the server? Assuming it’s not soooo bad which is denying all incoming requests.">
+<meta property="og:updated_time" content="2015-12-24T19:14:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Trouble Shooting Your Linux Server In One Minute">
+<meta name="twitter:description" content="If you noticed a weirly performing Linux server, what things are you going to check in the first minute after jumping on the server? Assuming it’s not soooo bad which is denying all incoming requests.">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'remove',
+    motion: true
+  };
+</script>
+
+  <title> Trouble Shooting Your Linux Server In One Minute | Zeyang's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-26732808-3', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Zeyang's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Technical and Stuff</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+      
+        <li class="menu-item menu-item-search">
+          <a href="#" class="st-search-show-outputs">
+            
+              <i class="menu-item-icon fa fa-search icon-next-search"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', '3pDpKrzpyPDiExmYkXT1','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Trouble Shooting Your Linux Server In One Minute
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            Posted on
+            <time itemprop="dateCreated" datetime="2015-12-23T23:09:52-05:00" content="2015-12-23">
+              2015-12-23
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2015/12/23/Trouble-Shooting-Your-Linux-Server-In-One-Minute/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/12/23/Trouble-Shooting-Your-Linux-Server-In-One-Minute/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>If you noticed a weirly performing Linux server, what things are you going to check in the first minute after jumping on the server? Assuming it’s not soooo bad which is denying all incoming requests. :)</p>
+<p>If you are alerted by some preestablished metric thresholds, like “low disk space”, “low free mem” etc. The best practice is probably just fill in the prescription: throw out some logs or kill some long running processes. Here I want to talk about more debugging checks, and gives you a quick understanding of what is happening on the box at the moment.</p>
+<a id="more"></a>
+<p>Among so many metrics, what are most important ones to look at? Or which ones can deliver most information you need about a Linux server. Brendan Gregg proposed a method called <strong><a href="http://www.brendangregg.com/usemethod.html" target="_blank" rel="external">USE (Utilization, Saturation, Errors)</a></strong> in his book &lt;&lt; System Performance: Enterprise and the Cloud &gt;&gt;. The key concept of this method is: For every resource, check utilization, saturation, and errors(0).</p>
+<p>Terminology definitions:</p>
+<ul>
+<li>Resource: all physical server functional components (CPUs, disks, busses, …)</li>
+<li>Utilization: the average time that the resource was busy servicing work</li>
+<li>Saturation: the degree to which the resource has extra work which it can’t service, often queued</li>
+<li>Errors: the count of error events</li>
+</ul>
+<h2 id="uptime/w">uptime/w</h2><figure class="highlight bash"><figcaption><span>uptime</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~$ uptime</span><br><span class="line"> <span class="number">06</span>:<span class="number">37</span>:<span class="number">07</span> up <span class="number">217</span> days, <span class="number">18</span>:<span class="number">11</span>,  <span class="number">1</span> user,  load average: <span class="number">1.61</span>, <span class="number">0.68</span>, <span class="number">0.13</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><figcaption><span>w</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">~$ w</span><br><span class="line"> <span class="number">06</span>:<span class="number">37</span>:<span class="number">07</span> up <span class="number">217</span> days, <span class="number">18</span>:<span class="number">11</span>,  <span class="number">1</span> user,  load average: <span class="number">1.61</span>, <span class="number">0.68</span>, <span class="number">0.13</span></span><br><span class="line">USER     TTY      FROM              LOGIN@   IDLE   JCPU   PCPU WHAT</span><br><span class="line">zwang    pts/<span class="number">2</span>    jump.xxxxxxxxxxx <span class="number">18</span>:<span class="number">12</span>    <span class="number">0.00</span>s  <span class="number">0.07</span>s  <span class="number">0.00</span>s w</span><br></pre></td></tr></table></figure>
+<p>A very light weight command that quickly shows you how many long the system has been running, and load average.</p>
+<p><strong>Load Average</strong> is very important 3 numbers that show system load over the past 1, 5 and 15 minutes accordingly. It calculates by from 0.00 to 1.00 or higher, where 0.00 means no load and 1.00 means full load capacity, per core of you CPU.</p>
+<p>For the above example, my system load is 1.61 duraing the past 1 minute, which is not at capacity because it’s a dual-core system(capacity is 2 in this case).</p>
+<h2 id="vmstat">vmstat</h2><figure class="highlight bash"><figcaption><span>Load Stats - Mem and CPU</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">~$ vmstat <span class="number">1</span></span><br><span class="line">procs -----------memory---------- ---swap-- -----io---- --system-- -----cpu------</span><br><span class="line"> r  b   swpd   free   buff  cache   si   so    bi    bo   <span class="keyword">in</span>   cs us sy id wa st</span><br><span class="line"> <span class="number">1</span>  <span class="number">0</span> <span class="number">289336</span> <span class="number">259920</span> <span class="number">290900</span> <span class="number">883276</span>    <span class="number">0</span>    <span class="number">0</span>     <span class="number">2</span>    <span class="number">35</span>    <span class="number">0</span>    <span class="number">1</span>  <span class="number">0</span>  <span class="number">0</span> <span class="number">99</span>  <span class="number">0</span>  <span class="number">0</span></span><br><span class="line"> <span class="number">0</span>  <span class="number">0</span> <span class="number">289336</span> <span class="number">259920</span> <span class="number">290904</span> <span class="number">883272</span>    <span class="number">0</span>    <span class="number">0</span>     <span class="number">0</span>   <span class="number">352</span>   <span class="number">75</span>   <span class="number">77</span>  <span class="number">0</span>  <span class="number">0</span> <span class="number">100</span>  <span class="number">0</span>  <span class="number">0</span></span><br><span class="line"> <span class="number">0</span>  <span class="number">0</span> <span class="number">289336</span> <span class="number">259672</span> <span class="number">290904</span> <span class="number">883276</span>    <span class="number">0</span>    <span class="number">0</span>     <span class="number">0</span>     <span class="number">0</span>   <span class="number">82</span>  <span class="number">100</span>  <span class="number">0</span>  <span class="number">0</span> <span class="number">100</span>  <span class="number">0</span>  <span class="number">0</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>That <code>1</code> means pring out a snapshot every second.</p>
+<ul>
+<li><code>si</code> and <code>so</code> means swap mem in/out, if they are not 0, it means no free memory is available right now.</li>
+<li><code>r</code> means # of threads waiting for run time, so r &gt; # of CPU means load is beyond capacity.</li>
+<li><code>id</code> means CPU idle time; <code>us</code> and <code>sy</code> means user CPU time and system CPU time respectively; <code>st</code> means <em>steal time</em>, it happens when VM’s hypervisor is taking current system’s CPU and use it elsewhere (other VM etc).</li>
+</ul>
+<p>CPU idle and user time + system time both tells you if CPU is busy, but us (user time) and sy (system time) can give you more info, for example, if sy is much higher than us, it possiblely means system is stucking on I/O.</p>
+<h2 id="mpstat">mpstat</h2><figure class="highlight bash"><figcaption><span>Load Stats Per Core</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">~$ mpstat -P ALL <span class="number">1</span></span><br><span class="line">Linux <span class="number">2.6</span>.<span class="number">18</span>-<span class="number">238.19</span>.<span class="number">1</span>.el5xen (my-linux) 	<span class="number">12</span>/<span class="number">24</span>/<span class="number">2015</span></span><br><span class="line"></span><br><span class="line"><span class="number">07</span>:<span class="number">13</span>:<span class="number">48</span> AM  CPU   %user   %nice    %sys %iowait    %irq   %soft  %steal   %idle    intr/s</span><br><span class="line"><span class="number">07</span>:<span class="number">13</span>:<span class="number">49</span> AM  all    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>  <span class="number">100.00</span>     <span class="number">68.00</span></span><br><span class="line"><span class="number">07</span>:<span class="number">13</span>:<span class="number">49</span> AM    <span class="number">0</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>  <span class="number">100.00</span>     <span class="number">46.00</span></span><br><span class="line"><span class="number">07</span>:<span class="number">13</span>:<span class="number">49</span> AM    <span class="number">1</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>    <span class="number">0.00</span>  <span class="number">100.00</span>     <span class="number">21.00</span></span><br></pre></td></tr></table></figure>
+<p>Similar metrics with <code>vmstat</code>, but display stat per core so you can check if each core is load balanced.</p>
+<h2 id="iostat">iostat</h2><figure class="highlight bash"><figcaption><span>I/O stats</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">~$ iostat -dmx <span class="number">5</span></span><br><span class="line">Linux <span class="number">2.6</span>.<span class="number">18</span>-<span class="number">238.19</span>.<span class="number">1</span>.el5xen (<span class="number">30</span>.zwang.user.nym2) 	<span class="number">12</span>/<span class="number">24</span>/<span class="number">2015</span></span><br><span class="line"></span><br><span class="line">Device:         rrqm/s   wrqm/s   r/s   w/s    rMB/s    wMB/s avgrq-sz avgqu-sz   await  svctm  %util</span><br><span class="line">sda1              <span class="number">0.02</span>     <span class="number">9.30</span>  <span class="number">0.25</span>  <span class="number">7.95</span>     <span class="number">0.00</span>     <span class="number">0.07</span>    <span class="number">17.56</span>     <span class="number">0.05</span>    <span class="number">5.54</span>   <span class="number">0.64</span>   <span class="number">0.53</span></span><br><span class="line">sda2              <span class="number">0.02</span>     <span class="number">0.07</span>  <span class="number">0.01</span>  <span class="number">0.03</span>     <span class="number">0.00</span>     <span class="number">0.00</span>    <span class="number">27.79</span>     <span class="number">0.00</span>   <span class="number">99.32</span>   <span class="number">1.21</span>   <span class="number">0.00</span></span><br></pre></td></tr></table></figure>
+<p>This is a very useful command because you are likely to see I/O bound very often.<br><code>-d</code> means only display device utilization (exclude CPU), <code>-m</code> means in megabyte format, <code>-x</code> means extra stats (always good :).</p>
+<ul>
+<li><code>r/s</code>, <code>w/s</code>, <code>rMB/s</code> and <code>wMB/s</code> means # of R/W requests, and size of R/W sent to CPU per second.</li>
+<li><code>avgqu-sz</code> shows # of requests wait in device’s queue. If this is greater than # of cores, it means your system is overloaded.</li>
+<li><code>%util</code> is the % of CPU time when requests were issued. When it becomes 100%, the device is saturated.</li>
+</ul>
+<h2 id="dmesg">dmesg</h2><figure class="highlight bash"><figcaption><span>System's Latest Error Message</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">~$ dmesg | tail</span><br><span class="line">Swap cache: add <span class="number">1157149</span>, delete <span class="number">1156672</span>, find <span class="number">70807</span>/<span class="number">80358</span>, race <span class="number">0</span>+<span class="number">13</span></span><br><span class="line">Free swap  = <span class="number">0</span>kB</span><br><span class="line">Total swap = <span class="number">4194296</span>kB</span><br><span class="line">Free swap:            <span class="number">0</span>kB</span><br><span class="line">...</span><br><span class="line">phpunit[<span class="number">7388</span>]: segfault at <span class="number">00002</span>b40285c2018 rip <span class="number">00000000005</span>b5bf8 rsp <span class="number">00007</span>fff84a77be0 error <span class="number">4</span></span><br></pre></td></tr></table></figure>
+<p>This would display last 10 system message, helpful on finding possible system failures.</p>
+<h2 id="ifconfig">ifconfig</h2><p>Everyone knows to check IP address with this command, but few knows it also shows your # of error and dropped packets.<br><figure class="highlight bash"><figcaption><span>ifconfig | grep error</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">~$ ifconfig | grep error</span><br><span class="line">          RX packets:<span class="number">262418135</span> errors:<span class="number">0</span> dropped:<span class="number">0</span> overruns:<span class="number">0</span> frame:<span class="number">0</span></span><br><span class="line">          TX packets:<span class="number">53768807</span> errors:<span class="number">0</span> dropped:<span class="number">0</span> overruns:<span class="number">0</span> carrier:<span class="number">0</span></span><br><span class="line">          RX packets:<span class="number">6416646</span> errors:<span class="number">0</span> dropped:<span class="number">0</span> overruns:<span class="number">0</span> frame:<span class="number">0</span></span><br><span class="line">          TX packets:<span class="number">6416646</span> errors:<span class="number">0</span> dropped:<span class="number">0</span> overruns:<span class="number">0</span> carrier:<span class="number">0</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="free">free</h2><figure class="highlight bash"><figcaption><span>Buffers and Cached</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">~$ free -m</span><br><span class="line">             total       used       free     shared    buffers     cached</span><br><span class="line">Mem:          <span class="number">2048</span>       <span class="number">1852</span>        <span class="number">195</span>          <span class="number">0</span>        <span class="number">292</span>        <span class="number">870</span></span><br><span class="line">-/+ buffers/cache:        <span class="number">689</span>       <span class="number">1358</span></span><br><span class="line">Swap:         <span class="number">4095</span>        <span class="number">282</span>       <span class="number">3813</span></span><br></pre></td></tr></table></figure>
+<p>While you can retrive memory usage via a lot ways, <code>free</code> can quickly show you stats of <code>buffers</code> and <code>cached</code>.</p>
+<ul>
+<li>A buffer is a temporary location assigned to an application that’s used by <strong>system</strong>, it buffers data pior to I/O;</li>
+<li>Unlike buffer, cache is used for filesystems and store frequently used data from your disk for fast access, similar idea like LRU in many software caching application.</li>
+</ul>
+<p>If both values are reaching 0, it means system is currently under high I/O usage, which can be verified by <code>iostat -dmx</code>.</p>
+<p>More about free see <a href="http://www.linuxnix.com/find-ram-size-in-linuxunix/" target="_blank" rel="external">this post at linuxnix</a>.</p>
+<h2 id="netstat">netstat</h2><figure class="highlight bash"><figcaption><span>Show All Listened TCP/UDP Port</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">~$ netstat -tulpn</span><br><span class="line">(Not all processes could be identified, non-owned process info</span><br><span class="line"> will not be shown, you would have to be root to see it all.)</span><br><span class="line">Active Internet connections (only servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address               Foreign Address             State       PID/Program name</span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> :::<span class="number">3306</span>                     :::*                        LISTEN      -</span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> :::<span class="number">16011</span>                    :::*                        LISTEN      -</span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> :::<span class="number">11211</span>                    :::*                        LISTEN      -</span><br><span class="line">...</span><br><span class="line">udp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">11211</span>               <span class="number">0.0</span>.<span class="number">0.0</span>:*                               -</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>There is a lot arguments, but each has its meaning. <code>-tu</code> means show TCP and UDP only, because those are what you are looking for most of time; <code>-l</code> means display listening sockets only; <code>-p</code> will display PID/Program of the application that owns the port, also keep in mind that you mind need sudo access to view this column. Above result was ran by me (user), which shows no Program name, but can be viewed by super user:<br><figure class="highlight bash"><figcaption><span>Usage of Port 3306</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~$ sudo netstat -tulpn | grep :<span class="number">3306</span></span><br><span class="line">tcp        <span class="number">0</span>      <span class="number">0</span> :::<span class="number">3306</span>                     :::*                        LISTEN      <span class="number">22571</span>/mysqld</span><br></pre></td></tr></table></figure></p>
+<p>Now it shows 3306 is listened by mysql.</p>
+<p>See more about netstat at <a href="http://www.cyberciti.biz/faq/what-process-has-open-linux-port/" target="_blank" rel="external">this post at cyberciti</a>.</p>
+<h2 id="top">top</h2><p>Alright, finally <code>top</code>. IMO this is the most powerful tool that gives you a lot information about your linux server, and it probably covered/overlapped most of the commands output we listed above. Unlike <code>top</code>, which is like printing snapshot of a collection your system stats, commands like <code>vmstat</code>, <code>iostat</code> can roll out stats constantly so you can view some metric across a duration, for debugging/logging purposes or what not. Furthermore, with the combination of awk/sed etc, you will be able to do more cool things.</p>
+<p>You can do a lot of things with <code>top</code>, but usually I use it when I am trying to get a high level idea of resource utilization of each application.</p>
+<p>Conclusion, I often find it’s overwhelming to learn so many different Linux shell commands, among which overlaps with each other’s functionality sometimes too. I find it’s useful to learn them based on what you want to do, and learn them with specific purpose, check out <a href="http://www.brendangregg.com/USEmethod/use-linux.html" target="_blank" rel="external"><strong>this post</strong></a> from Brendan Gregg to find out debugging different system component with best shell commands.</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/bash/" rel="tag">#bash</a>
+          
+            <a href="/tags/linux/" rel="tag">#linux</a>
+          
+            <a href="/tags/performance/" rel="tag">#performance</a>
+          
+            <a href="/tags/server/" rel="tag">#server</a>
+          
+            <a href="/tags/shell/" rel="tag">#shell</a>
+          
+            <a href="/tags/trouble-shooting/" rel="tag">#trouble shooting</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/04/Disappeared-Trio-Encryption/" rel="next" title="Disappeared Trio-Encryption">
+                <i class="fa fa-chevron-left"></i> Disappeared Trio-Encryption
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zeyang Wang</span>
+</div>
+<div class="disclaimer">
+  All Rights Reserved.
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+    
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'zeyangwang';
+      var disqus_identifier = '2015/12/23/Trouble-Shooting-Your-Linux-Server-In-One-Minute/';
+      var disqus_title = 'Trouble Shooting Your Linux Server In One Minute';
+      var disqus_url = 'http://zeyangwang.com/2015/12/23/Trouble-Shooting-Your-Linux-Server-In-One-Minute/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>
