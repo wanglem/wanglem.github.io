@@ -37,7 +37,7 @@
 <link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="zeyang,zeyang blog,zeyang Wang,zeyang's blog" />
+  <meta name="keywords" content="Algorithm,Bloom Filter,White Listing," />
 
 
 
@@ -53,19 +53,16 @@
 
 
 
-<meta name="description" content="Welcome to my space, this is my first attempt on post something with Hexo.
-Love the NexT theme!">
+<meta name="description" content="Filter is used on a lot of application with many use cases. While you could use a hash table in a lot of cases, it would usually require same amount of memory capacity of the list you want to filter o">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Initial Post">
-<meta property="og:url" content="http://zeyangwang.com/2015/10/31/init/index.html">
+<meta property="og:title" content="Understand Bloom Filter">
+<meta property="og:url" content="http://zeyangwang.com/2016/02/06/Understand-Bloom-Filter/index.html">
 <meta property="og:site_name" content="Zeyang's Blog">
-<meta property="og:description" content="Welcome to my space, this is my first attempt on post something with Hexo.
-Love the NexT theme!">
-<meta property="og:updated_time" content="2015-12-09T23:31:32.000Z">
+<meta property="og:description" content="Filter is used on a lot of application with many use cases. While you could use a hash table in a lot of cases, it would usually require same amount of memory capacity of the list you want to filter o">
+<meta property="og:updated_time" content="2016-02-06T16:46:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Initial Post">
-<meta name="twitter:description" content="Welcome to my space, this is my first attempt on post something with Hexo.
-Love the NexT theme!">
+<meta name="twitter:title" content="Understand Bloom Filter">
+<meta name="twitter:description" content="Filter is used on a lot of application with many use cases. While you could use a hash table in a lot of cases, it would usually require same amount of memory capacity of the list you want to filter o">
 
 
 
@@ -77,7 +74,7 @@ Love the NexT theme!">
   };
 </script>
 
-  <title> Initial Post | Zeyang's Blog </title>
+  <title> Understand Bloom Filter | Zeyang's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -242,7 +239,7 @@ Love the NexT theme!">
             
             
               
-                Initial Post
+                Understand Bloom Filter
               
             
           </h1>
@@ -251,8 +248,8 @@ Love the NexT theme!">
         <div class="post-meta">
           <span class="post-time">
             Posted on
-            <time itemprop="dateCreated" datetime="2015-10-31T18:25:38-04:00" content="2015-10-31">
-              2015-10-31
+            <time itemprop="dateCreated" datetime="2016-02-06T10:46:14-05:00" content="2016-02-06">
+              2016-02-06
             </time>
           </span>
 
@@ -262,8 +259,8 @@ Love the NexT theme!">
             
               <span class="post-comments-count">
               &nbsp; | &nbsp;
-              <a href="/2015/10/31/init/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/10/31/init/" itemprop="commentsCount"></span>
+              <a href="/2016/02/06/Understand-Bloom-Filter/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/02/06/Understand-Bloom-Filter/" itemprop="commentsCount"></span>
               </a>
             </span>
             
@@ -282,26 +279,48 @@ Love the NexT theme!">
       
 
       
-        <span itemprop="articleBody"><p>Welcome to my space, this is my first attempt on post something with Hexo.</p>
-<p>Love the NexT theme!</p>
+        <span itemprop="articleBody"><p>Filter is used on a lot of application with many use cases. While you could use a hash table in a lot of cases, it would usually require same amount of memory capacity of the list you want to filter on, and sometimes it’s an issue. Then Bloom Filter comes into the play.</p>
+<a id="more"></a>
+<h1 id="How_It_Works?">How It Works?</h1><p>Bloom Filter works by hash each filter string to bits level, and overlap those bits into one large enough bits array. With a simple illustration:<br>if we convert single char to bits:<br><figure class="highlight"><figcaption><span>Char to Bits</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#39;a&#39; -&#62; 01100001, &#39;b&#39; -&#62; 01100010, &#39;y&#39; -&#62; 01111001, &#39;c&#39; -&#62; 01100011,</span><br></pre></td></tr></table></figure></p>
+<p>and put ‘a’ and ‘b’ to a 8 bits array, we have array bf:<br><figure class="highlight"><figcaption><span>BloomFilter Bits Array ('a' and 'b')</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+---+---+---+---+---+---+---+---+&#10;| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | &#10;+---+---+---+---+---+---+---+---+&#10;| 0 | 1 | 1 | 0 | 0 | 0 | 1 | 1 |&#10;+---+---+---+---+---+---+---+---+</span><br></pre></td></tr></table></figure></p>
+<p>Now if we try put Char ‘y’ into this array, index 3,4,6 do not match so that ‘y’ is not in the filter list. Nice isn’t? Bloom Filter simply works this way.<br>Now it comes to the bitter side, if we compare ‘c’ bits with filter array, all elements matched but ‘c’ is not in the filter list, and that’s called <strong>False Positive</strong>. </p>
+<h1 id="False_Positive">False Positive</h1><p>Bloom Filter guanrantees return false when the string is not in filter list, but still could return true if it’s not in the list.</p>
+<p>It’s a sacrifice of accuracy of speed and capacity. While that is not perfectly desirable, the outcome influences would be low for some use cases. For example, a large scaled web server might need maintain a blacklist that reject incoming traffics, when response time is crucial, bloom filter would work greatly here even though sometimes it might recognize some OK traffic as blacklisted. (Maybe maintain another trust list that mistakenly filtered out by Bloom Filter?)</p>
+<h1 id="Improve_Accuracy_and_Confidence">Improve Accuracy and Confidence</h1><p>False Positive is caused by hash collision. The more overlapping bits filter list string have, the less accuracy your bloom filter could be. </p>
+<p>To decrease the number overlapped bits, first thing you can do is to improve the hash: 256 length of hash string instead of 128 for example.</p>
+<p>And of course, you simply can not increase hash lengh forever because length of filer list of not unmanageable, or even length of each filter string is uncontrollable as well. Best hash function is going to lose information from original string thus inevetibly cause collisions.</p>
+<p>Another solution I can think of is a <strong>Sharded Bloom Filter</strong>. The idea is, if the filter list is too long, and all the filter hash bits start overlapping all over, a separated filter table grouped by less overlapping bits would scale well. A down side would be more pre-processing before creating the bloom filter, but it usually happens during the initialization of an application so I guess it’s not a super big deal.</p>
+<h1 id="Adjust_Hash_Size_and_Bits_Array_Capacity_On_Demand">Adjust Hash Size and Bits Array Capacity On Demand</h1><p>While the better hash and larger bits array, the more accuracy you will gain. There should be a point that’s “good enough” for your size of data - real world use case huh? </p>
+<p>There are some very standard fancy math that could derive the answer for those number, I couldn’t possiblly remember any of them.. Math is hard anyway. One best practice I remember is that: <strong>keep the bits array half empty</strong>. And of course, test frequently your bloom filter with some production data sets!</p>
+<p>I just learnt this today, very cool stuff, and that is all I got from Bloom Filter!</p>
 </span>
       
     </div>
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Algorithm/" rel="tag">#Algorithm</a>
+          
+            <a href="/tags/Bloom-Filter/" rel="tag">#Bloom Filter</a>
+          
+            <a href="/tags/White-Listing/" rel="tag">#White Listing</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2015/12/23/Trouble-Shooting-Your-Linux-Server-In-One-Minute/" rel="next" title="Trouble Shooting Your Linux Server In One Minute">
+                <i class="fa fa-chevron-left"></i> Trouble Shooting Your Linux Server In One Minute
+              </a>
+            
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2015/11/02/Build-your-own-blog-with-AWS-and-Hexo/" rel="prev" title="Build your own blog with AWS and Hexo">
-                Build your own blog with AWS and Hexo <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -376,9 +395,9 @@ Love the NexT theme!">
 
     <script type="text/javascript">
       var disqus_shortname = 'zeyangwang';
-      var disqus_identifier = '2015/10/31/init/';
-      var disqus_title = 'Initial Post';
-      var disqus_url = 'http://zeyangwang.com/2015/10/31/init/';
+      var disqus_identifier = '2016/02/06/Understand-Bloom-Filter/';
+      var disqus_title = 'Understand Bloom Filter';
+      var disqus_url = 'http://zeyangwang.com/2016/02/06/Understand-Bloom-Filter/';
 
       function run_disqus_script(disqus_script){
         var dsq = document.createElement('script');
